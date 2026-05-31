@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senin İçin... ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Genel Stiller */
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Poppins', sans-serif;
+            /* Derin, romantik bir bordo/siyah gradyan arka plan */
+            background: linear-gradient(135deg, #0a0005 0%, #2a0014 100%);
+            color: #fff;
+            overflow: hidden; 
+            scroll-behavior: smooth;
+        }
+
+        /* Uçuşan Kalpler Efekti (Arka Plan) */
+        .arkaplan-kalpler {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .ucan-kalp {
+            position: absolute; display: block; width: 20px; height: 20px;
+            background: rgba(255, 0, 127, 0.2); animation: yuksel 20s linear infinite;
+            bottom: -150px; border-radius: 50%;
+        }
+        .ucan-kalp:before, .ucan-kalp:after {
+            content: ""; position: absolute; width: 100%; height: 100%;
+            background: inherit; border-radius: 50%;
+        }
+        .ucan-kalp:before { top: -10px; left: 0; }
+        .ucan-kalp:after { top: 0; left: 10px; }
+
+        @keyframes yuksel {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(-1000px) rotate(720deg) scale(0.3); opacity: 0; }
+        }
+
+        /* --- 1. EKRAN: ŞİFRE GİRİŞİ --- */
+        #giris-ekrani {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #050002; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 1.5s ease-out;
+        }
+        
+        .kalp-kilit-kutu { position: relative; margin-bottom: 50px; }
+        .kalp-kilit {
+            width: 80px; height: 80px; background-color: #ff007f;
+            transform: rotate(-45deg); box-shadow: 0 0 40px rgba(255, 0, 127, 0.6);
+            animation: kalpAtisi 1.2s infinite ease-in-out;
+        }
+        @keyframes kalpAtisi {
+            0% { transform: rotate(-45deg) scale(1); }
+            15% { transform: rotate(-45deg) scale(1.15); }
+            30% { transform: rotate(-45deg) scale(1); }
+            45% { transform: rotate(-45deg) scale(1.15); }
+            100% { transform: rotate(-45deg) scale(1); }
+        }
+        .kalp-kilit:before, .kalp-kilit:after {
+            content: ""; width: 80px; height: 80px; background-color: #ff007f; border-radius: 50%; position: absolute;
+        }
+        .kalp-kilit:before { top: -40px; left: 0; }
+        .kalp-kilit:after { top: 0; left: 40px; }
+
+        #giris-ekrani h1 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; letter-spacing: 2px; margin-bottom: 5px; text-align: center;}
+        
+        #sifre-kutusu {
+            padding: 15px 25px; font-size: 1.2rem; border-radius: 30px; 
+            border: 1px solid rgba(255, 0, 127, 0.5); background: rgba(255, 255, 255, 0.05); color: #fff; 
+            text-align: center; width: 70%; max-width: 250px; outline: none; margin-top: 20px;
+            backdrop-filter: blur(5px); letter-spacing: 3px; transition: all 0.3s;
+        }
+        #sifre-kutusu:focus { border-color: #ff007f; box-shadow: 0 0 15px rgba(255,0,127,0.3); }
+
+        #girs-btn {
+            margin-top: 25px; padding: 12px 40px; font-size: 1.1rem; border-radius: 30px; border: none;
+            background: linear-gradient(45deg, #ff007f, #b30059); color: #fff; cursor: pointer; 
+            transition: transform 0.2s, box-shadow 0.2s; font-family: 'Poppins', sans-serif;
+        }
+        #girs-btn:active { transform: scale(0.95); }
+        #hata-mesaji { color: #ff4d4d; margin-top: 15px; display: none; font-size: 0.9rem; }
+
+        /* --- 2. EKRAN: ANA İÇERİK --- */
+        #ana-icerik { display: none; height: 100%; overflow-y: auto; overflow-x: hidden; position: relative; z-index: 10; }
+
+        /* Kaydırıldıkça Belirme Sınıfı (Animasyon) */
+        .gizli { opacity: 0; transform: translateY(40px); transition: all 0.8s ease-out; }
+        .goster { opacity: 1; transform: translateY(0); }
+
+        /* Buzlu Cam (Glassmorphism) Ortak Stili */
+        .cam-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        /* Karşılama */
+        .karsilama { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+        .karsilama h1 { font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: #ff007f; text-shadow: 0 0 20px rgba(255, 0, 127, 0.6); margin-bottom: 15px; }
+        .karsilama p { font-size: 1.1rem; color: #d9d9d9; font-weight: 300; letter-spacing: 2px; }
+        .asagi-ok { font-size: 2.5rem; animation: asagiZipla 2s infinite; margin-top: 50px; opacity: 0.8; }
+        @keyframes asagiZipla { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(15px); } }
+
+        /* Fotoğraf Galerisi */
+        .galeri-konteyner { padding: 50px 20px; text-align: center; }
+        .galeri-baslik { font-family: 'Dancing Script', cursive; font-size: 3rem; margin-bottom: 40px; color: #fff; }
+        
+        .foto-kart { max-width: 350px; margin: 0 auto 60px auto; padding: 15px; transition: transform 0.3s; }
+        .foto-kart:hover { transform: scale(1.02); }
+        .foto-kart img { width: 100%; height: auto; border-radius: 15px; display: block; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .ask-notu { margin-top: 20px; font-size: 1.05rem; line-height: 1.6; font-style: italic; color: #f2f2f2; font-weight: 300; }
+
+        /* Uzun Mektup */
+        .mektup-alani { max-width: 600px; margin: 0 auto 60px auto; padding: 40px 30px; text-align: center; }
+        .mektup-alani h2 { font-family: 'Dancing Script', cursive; color: #ff007f; font-size: 2.5rem; margin-bottom: 25px; }
+        .mektup-alani p { margin-bottom: 20px; font-size: 1.05rem; line-height: 1.9; color: #e6e6e6; text-align: justify; font-weight: 300; }
+
+        /* Kalp Duvarı */
+        .kalp-duvari { padding: 40px 20px 80px 20px; text-align: center; font-size: 1.8rem; line-height: 1.8; letter-spacing: 8px; word-wrap: break-word; }
+        .kalp-duvari-baslik { font-family: 'Dancing Script', cursive; font-size: 2rem; color: #fff; margin-bottom: 30px; letter-spacing: 1px; }
+
+        footer { text-align: center; padding: 40px 20px; font-size: 1.2rem; color: #ff007f; font-family: 'Dancing Script', cursive; letter-spacing: 2px; }
+        #muzika { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="arkaplan-kalpler" id="kalp-alani"></div>
+
+    <div id="giris-ekrani">
+        <div class="kalp-kilit-kutu">
+            <div class="kalp-kilit"></div>
+        </div>
+        <h1>Hoş geldin canım sevgilim</h1>
+        <p style="text-align: center; color: #aaa; font-size: 0.9rem; font-weight: 300;">Kilidi açmak için tanışma tarihimizi gir (GGMMYYYY)</p>
+        <input type="password" id="sifre-kutusu" placeholder="••••••••">
+        <button id="girs-btn">Kilidi Aç</button>
+        <p id="hata-mesaji">Tarihi yanlış girdin güzelim, tekrar dene. 😘</p>
+    </div>
+
+    <div id="ana-icerik">
+        
+        <audio id="muzika" loop>
+            <source src="muzik.mp3" type="audio/mpeg">
+        </audio>
+
+        <section class="karsilama">
+            <h1>Sadece İkimiz İçin</h1>
+            <p>SENİN İÇİN ÖZEL OLARAK HAZIRLANDI</p>
+            <div class="asagi-ok">👇</div>
+        </section>
+
+        <section class="galeri-konteyner">
+            <h2 class="galeri-baslik gizli">Bizim Hikayemiz...</h2>
+
+            <div class="foto-kart cam-panel gizli">
+                <img src="foto1.jpg" alt="Anımız 1">
+                <p class="ask-notu">Gözlerine her baktığımda ne kadar şanslı bir adam olduğumu tekrar tekrar anlıyorum. Seninle gülmek, seninle dertleşmek, o güzel ellerini tutmak hayatta başıma gelen en güzel şey.  </p>
+            </div>
+
+            <div class="foto-kart cam-panel gizli">
+                <img src="foto2.jpg" alt="Anımız 2">
+                <p class="ask-notu">Kollarının arası, ait olduğum tek yer. Seni sarıp sarmaladığım her an zaman tamamen dursun istiyorum.</p>
+            </div>
+
+            <div class="foto-kart cam-panel gizli">
+                <img src="foto3.jpg" alt="Anımız 3">
+                <p class="ask-notu">Senin yüzünü her güldürdüğümde kendimi dünyanın en şanslı adamı hissediyorum. İyi ki benimsin bebeğimmmm.</p>
+            </div>
+
+            <div class="foto-kart cam-panel gizli">
+                <img src="foto4.jpg" alt="Anımız 4">
+                <p class="ask-notu">Bu karede, bana duyduğun o derin sevginin ve benim sana olan hayranlığımın somut bir kanıtı var. Beni böyle seven biriyle olduğum için dünyanın en şanslı kişisiyim.</p>
+            </div>
+
+            <div class="foto-kart cam-panel gizli">
+                <img src="foto5.jpg" alt="Anımız 5">
+                <p class="ask-notu">Seninle geçen en sıradan an bile, başkalarının en güzel gününden daha değerli benim için.</p>
+            </div>
+        </section>
+
+        <section class="mektup-alani cam-panel gizli">
+            <h2>İyii kii Sen...</h2>
+            <p>
+               Hayatıma girdiğin ilk günden beri dünyamın renkleri değişti. Bazen ufak tefek tartışmalarımız, anlaşmazlıklarımız olsa da bilmeni isterim ki sana olan sevgim her geçen gün daha da derinleşiyor.
+            </p>
+            <p>
+                Beni olduğum gibi kabul ettiğin, şefkatini benden esirgemediğin ve her anımda yanımda olduğun için sana minnettarım. Seni dünyadaki her şeyden çok seviyorum.
+            </p>
+            <p>
+                seni çokk seviyorum seni dünyadaki herşeyden çok seviyorum, sana değer veriyorum sana dünyadaki her şeyden daha çok değer veriyorum.
+            </p>
+        </section>
+
+        <section class="kalp-duvari gizli">
+            <div class="kalp-duvari-baslik">Sen olduğun için çok şanslıyım</div>
+            💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖💖
+        </section>
+
+        <footer class="gizli">
+            Sonsuza dek, seninle... ❤️
+        </footer>
+    </div>
+
+    <script>
+        // --- AYARLAR ---
+        const dogruSifre = 
+"070326"; // TANIŞMA TARİHİNİ BURAYA YAZ
+        // ---------------
+
+        // Uçuşan Kalpler Oluşturucu (Arka plan efekti)
+        const kalpAlani = document.getElementById('kalp-alani');
+        for(let i = 0; i < 15; i++) {
+            let kalp = document.createElement('div');
+            kalp.className = 'ucan-kalp';
+            kalp.style.left = Math.random() * 100 + 'vw';
+            kalp.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            kalp.style.animationDelay = (Math.random() * 10) + 's';
+            kalpAlani.appendChild(kalp);
+        }
+
+        // Şifre Ekranı Mantığı
+        const girisEkrani = document.getElementById('giris-ekrani');
+        const anaIcerik = document.getElementById('ana-icerik');
+        const sifreKutusu = document.getElementById('sifre-kutusu');
+        const girisBtn = document.getElementById('girs-btn');
+        const hataMesaji = document.getElementById('hata-mesaji');
+        const muzika = document.getElementById('muzika');
+
+        girisBtn.addEventListener('click', function() {
+            if (sifreKutusu.value === dogruSifre) {
+                girisEkrani.style.opacity = '0';
+                setTimeout(function() {
+                    girisEkrani.style.display = 'none';
+                    anaIcerik.style.display = 'block';
+                    document.body.style.overflow = 'auto';
+                    muzika.play();
+                }, 1000);
+            } else {
+                hataMesaji.style.display = 'block';
+                sifreKutusu.value = '';
+                sifreKutusu.focus();
+            }
+        });
+
+        sifreKutusu.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') girisBtn.click();
+        });
+
+        // Kaydırdıkça Belirme (Scroll Reveal) Efekti
+        const gozlemleyici = new IntersectionObserver((girdiler) => {
+            girdiler.forEach((girdi) => {
+                if (girdi.isIntersecting) {
+                    girdi.target.classList.add('goster');
+                }
+            });
+        });
+
+        const gizliElemanlar = document.querySelectorAll('.gizli');
+        gizliElemanlar.forEach((el) => gozlemleyici.observe(el));
+    </script>
+
+</body>
+</html>
